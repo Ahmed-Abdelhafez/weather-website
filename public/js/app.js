@@ -1,6 +1,3 @@
-console.log('Client side javascript file is loaded!')
-
-
 const locationform = document.querySelector('form')
 const search = document.querySelector('input')
 const massageone = document.querySelector('#massage-1')

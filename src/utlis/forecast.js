@@ -1,14 +1,14 @@
 const request = require('request')
 
 const forecast = (lon, lat, callback) => {
-    const url = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon) + '&appid=443d9e7768d8b67b221c6bd4969832da'
+    const url = 'http://api.weatherstack.com/current?access_key=f8856fbe2cc37cc640fce768b7a19337&query=' + encodeURIComponent(lat) + ',' + encodeURIComponent(lon)
     request({ url, json: true }, (error, {body}) => {
         if (error) {
             callback('unable to connect to weather services!', undefined)
         } else if (body.error) {
             callback('unable to find location', undefined)
         } else {
-            callback(undefined, body.daily[0].weather[0].description + '. It is currently '  + body.current.temp + ' degress out. The Percentage of clouds is ' + body.daily[0].clouds + '%. The wind speed is ' + body.daily[0].wind_speed + ' km/h.')
+            callback(undefined, body.current.weather_descriptions + '. It is currently '  + body.current.temperature + ' degress out. The Percentage of clouds is ' + body.current.cloudcover + '%. The wind speed is ' + body.current.wind_speed + ' km/h.')
         }
     })
 }

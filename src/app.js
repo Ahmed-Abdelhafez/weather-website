@@ -44,18 +44,33 @@ app.get('/help', (req, res) => {
 })
 
 app.get('/weather', (req, res) => {
-    if (!req.query.address) {
+    if (!req.query.address && !req.query.lat) {
         return res.send({
-            error: 'Address mest be provided'
+            error: 'Address mest be provided or find weather in your location'
         })
     }
-    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+    if(req.query.lat){
+        console.log(req.query.lat)
+        console.log(req.query.lon)
+        forecast(req.query.lat, req.query.lon , (error, forecastdata) => {
+            if (error) {
+                return res.send({ error })
+            }
+
+            res.send({
+                forecast: forecastdata,
+                address: req.query.address
+            })
+        })
+    }
+    else {
+        geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
         if (error) {
-            return res.send({error})
+            return res.send({ error })
         }
         forecast(latitude, longitude, (error, forecastdata) => {
             if (error) {
-                return res.send({error})
+                return res.send({ error })
             }
 
             res.send({
@@ -65,23 +80,26 @@ app.get('/weather', (req, res) => {
             })
         })
     })
-})    
-        app.get('/help/*', (req, res) => {
-            res.render('404', {
-                title: '404',
-                name: '3omda',
-                errorMessage: 'Help article not found.'
-            })
-        })
+}
+})
 
-        app.get('*', (req, res) => {
-            res.render('404', {
-                title: '404',
-                name: '3omda',
-                errorMessage: 'Page not found.'
-            })
-        })
 
-        app.listen(port, () => {
-            console.log('Server is up on port ' + port)
-        })
+app.get('/help/*', (req, res) => {
+    res.render('404', {
+        title: '404',
+        name: '3omda',
+        errorMessage: 'Help article not found.'
+    })
+})
+
+app.get('*', (req, res) => {
+    res.render('404', {
+        title: '404',
+        name: '3omda',
+        errorMessage: 'Page not found.'
+    })
+})
+
+app.listen(port, () => {
+    console.log('Server is up on port ' + port)
+})
